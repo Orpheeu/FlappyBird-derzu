@@ -200,7 +200,7 @@ int meuDetectAndDraw(Mat& img, CascadeClassifier& cascade, double scale, int rec
 
         if(qtdF % 100 == 0) { velocidade += 0.2; }
 
-        if(x1 < 70) { 
+        if(x1 < 40) { 
             // Encontra o cano mais à direita
             float maiorX = max({x2, x3, x4, x5, x6});
             x1 = maiorX + ESPACAMENTO_CANOS;
@@ -208,35 +208,35 @@ int meuDetectAndDraw(Mat& img, CascadeClassifier& cascade, double scale, int rec
             playwins(); 
         }
 
-        if(x2 < 70) { 
+        if(x2 < 40) { 
             float maiorX = max({x1, x3, x4, x5, x6});
             x2 = maiorX + ESPACAMENTO_CANOS;
             pontos++; 
             playwins(); 
         }
 
-        if(x3 < 70) { 
+        if(x3 < 40) { 
             float maiorX = max({x1, x2, x4, x5, x6});
             x3 = maiorX + ESPACAMENTO_CANOS;
             pontos++; 
             playwins(); 
         }
 
-        if(x4 < 70) { 
+        if(x4 < 40) { 
             float maiorX = max({x1, x2, x3, x5, x6});
             x4 = maiorX + ESPACAMENTO_CANOS;
             pontos++; 
             playwins(); 
         }
 
-        if(x5 < 70) { 
+        if(x5 < 40) { 
             float maiorX = max({x1, x2, x3, x4, x6});
             x5 = maiorX + ESPACAMENTO_CANOS;
             pontos++; 
             playwins(); 
         }
 
-        if(x6 < 70) { 
+        if(x6 < 40) { 
             float maiorX = max({x1, x2, x3, x4, x5});
             x6 = maiorX + ESPACAMENTO_CANOS;
             pontos++; 
