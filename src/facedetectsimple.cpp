@@ -152,7 +152,7 @@ float filtroPassaBaixa(float novaPosicao, float posicaoAnterior, float &velocida
     return posicaoFiltrada;
 }
 
-int meuDetectAndDraw(Mat& img, CascadeClassifier& cascade, double scale, int recordeAtual) {
+int meuDetectAndDraw(Mat& img, CascadeClassifier& cascade, double scale, int recordeAtual, string nomeRecordista) {
     Mat imagemProcessada = preparaImagem(img, scale);
     Mat imagemCinza = converteParaCinza(imagemProcessada);
     vector<Rect> rostos = buscaRostos(imagemCinza, cascade);
@@ -200,7 +200,7 @@ int meuDetectAndDraw(Mat& img, CascadeClassifier& cascade, double scale, int rec
 
         if(qtdF % 100 == 0) { velocidade += 0.2; }
 
-        if(x1 < 100) { 
+        if(x1 < 70) { 
             // Encontra o cano mais à direita
             float maiorX = max({x2, x3, x4, x5, x6});
             x1 = maiorX + ESPACAMENTO_CANOS;
@@ -208,35 +208,35 @@ int meuDetectAndDraw(Mat& img, CascadeClassifier& cascade, double scale, int rec
             playwins(); 
         }
 
-        if(x2 < 100) { 
+        if(x2 < 70) { 
             float maiorX = max({x1, x3, x4, x5, x6});
             x2 = maiorX + ESPACAMENTO_CANOS;
             pontos++; 
             playwins(); 
         }
 
-        if(x3 < 100) { 
+        if(x3 < 70) { 
             float maiorX = max({x1, x2, x4, x5, x6});
             x3 = maiorX + ESPACAMENTO_CANOS;
             pontos++; 
             playwins(); 
         }
 
-        if(x4 < 100) { 
+        if(x4 < 70) { 
             float maiorX = max({x1, x2, x3, x5, x6});
             x4 = maiorX + ESPACAMENTO_CANOS;
             pontos++; 
             playwins(); 
         }
 
-        if(x5 < 100) { 
+        if(x5 < 70) { 
             float maiorX = max({x1, x2, x3, x4, x6});
             x5 = maiorX + ESPACAMENTO_CANOS;
             pontos++; 
             playwins(); 
         }
 
-        if(x6 < 100) { 
+        if(x6 < 70) { 
             float maiorX = max({x1, x2, x3, x4, x5});
             x6 = maiorX + ESPACAMENTO_CANOS;
             pontos++; 
@@ -314,42 +314,43 @@ int meuDetectAndDraw(Mat& img, CascadeClassifier& cascade, double scale, int rec
             }
         }
 
-        
-        putText(imagemProcessada, to_string(pontos), Point(320, 50), 
-                FONT_HERSHEY_PLAIN, 3, Scalar(255,255,255));
+        string pontuacao = "Pontuacao: " + to_string(pontos);
+        putText(imagemProcessada, pontuacao, Point(10, 80), 
+                FONT_HERSHEY_PLAIN, 1.8, Scalar(255,255, 0), 2);
 
-        putText(imagemProcessada, "Recorde: " + to_string(recordeAtual), Point(10, 50), 
-                FONT_HERSHEY_PLAIN, 2, Scalar(255,215,0));
+        string txtRecorde = "Recorde: " + nomeRecordista + " - " + to_string(recordeAtual);
+        putText(imagemProcessada, txtRecorde, Point(10, 40), 
+                FONT_HERSHEY_PLAIN, 1.8, Scalar(255,215,0), 2);
 
     } else {
-        // Fundo escurecido
-        drawTransRect(imagemProcessada, Scalar(0, 0, 0), 0.7, 
-                    Rect(0, 0, imagemProcessada.cols, imagemProcessada.rows));
+        // Cria uma imagem PRETA do zero
+        Mat telaGameOver = Mat::zeros(imagemProcessada.size(), imagemProcessada.type());
         
-        // Título GAME OVER
-        putText(imagemProcessada, "GAME OVER", Point(70, 150), 
-                FONT_HERSHEY_DUPLEX, 4, Scalar(255, 0, 0), 3);  // Vermelho, grosso
+        // GAME OVER (vermelho, grande, centralizado)
+        putText(telaGameOver, "GAME OVER", Point(90, 200), 
+                FONT_HERSHEY_DUPLEX, 3.5, Scalar(0, 0, 255), 4);
         
-        // Pontuação final
-        string txtPontos = "Pontuacao: " + to_string(pontos);
-        putText(imagemProcessada, txtPontos, Point(120, 220), 
-                FONT_HERSHEY_PLAIN, 3, Scalar(255,255,255), 2);
+        // Sua pontuação (branco)
+        string txtPontos = "Sua Pontuacao: " + to_string(pontos);
+        putText(telaGameOver, txtPontos, Point(150, 270), 
+                FONT_HERSHEY_PLAIN, 2.5, Scalar(255,255,255), 2);
         
-        // Recorde
-        string txtRecorde = "Recorde: " + to_string(recordeAtual);
-        Scalar corRecorde = (pontos >= recordeAtual) ? Scalar(0,255,0) : Scalar(255,215,0);  // Verde se bateu, dourado se não
-        putText(imagemProcessada, txtRecorde, Point(130, 270), 
-                FONT_HERSHEY_PLAIN, 2.5, corRecorde, 2);
-        
-        // Novo recorde?
+        // Verifica se bateu recorde
         if(pontos >= recordeAtual) {
-            putText(imagemProcessada, "NOVO RECORDE!", Point(100, 320), 
-                    FONT_HERSHEY_DUPLEX, 2, Scalar(0,255,0), 2);  // Verde
+            putText(telaGameOver, "NOVO RECORDE!", Point(140, 320), 
+                    FONT_HERSHEY_DUPLEX, 2, Scalar(0,255,0), 3);
+        } else {
+            string txtRecorde = "Recorde: " + nomeRecordista + " - " + to_string(recordeAtual);
+            putText(telaGameOver, txtRecorde, Point(110, 320), 
+                    FONT_HERSHEY_PLAIN, 2, Scalar(255,215,0), 2);
         }
         
         // Instruções
-        putText(imagemProcessada, "Pressione qualquer tecla para voltar", 
-                Point(30, 380), FONT_HERSHEY_PLAIN, 1.8, Scalar(200,200,200));
+        putText(telaGameOver, "Pressione qualquer tecla para continuar", 
+                Point(60, 390), FONT_HERSHEY_PLAIN, 1.8, Scalar(200,200,200));
+        
+        imshow("result", telaGameOver);  // Mostra a tela preta
+        return 1;
     }
 
     imshow("result", imagemProcessada);
@@ -380,6 +381,12 @@ int main(int argc, const char** argv) {
     pipeTopFull = cv::imread("../data/pipe_up.png", IMREAD_UNCHANGED);
     pipeBottomFull = cv::imread("../data/pipe_bottom.png", IMREAD_UNCHANGED);
     flappy = cv::imread("../data/flappy.png", IMREAD_UNCHANGED);
+
+    if(!stream.is_open() || texto.empty()) {
+        cout << "Arquivo de recordes nao encontrado, sera criado." << endl;
+        recorde = 0;
+        usuarioTopo = "Ninguem";  // Valor padrão
+    }
     
     if(pipeTopFull.empty()) {
         cerr << "ERRO: Nao conseguiu carregar ../data/pipe_up.png" << endl;
@@ -461,17 +468,25 @@ int main(int argc, const char** argv) {
                     capture >> frame;
                     if(frame.empty()) break;
 
-                    meuDetectAndDraw(frame, cascade, scale, recorde);
+                    meuDetectAndDraw(frame, cascade, scale, recorde, usuarioTopo);
                     
-                    if(lose) { 
-                        waitKey(500);
-                        break; 
-                    } 
-                
+                    if(lose) {
+                        // FORÇA desenhar a tela de Game Over chamando a função de novo
+                        meuDetectAndDraw(frame, cascade, scale, recorde, usuarioTopo);
+                        
+                        // Agora SIM espera tecla
+                        while(true) {
+                            char tecla = (char)waitKey(30);
+                            if(tecla != -1) {
+                                break;
+                            }
+                        }
+                        break;
+                    }
+                    
                     char c = (char)waitKey(10);
                     if(c == 27 || c == '0') break;
                 }
-
                 destroyAllWindows(); 
                 
                 if(pontos > recorde) {
