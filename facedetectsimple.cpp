@@ -9,7 +9,7 @@
 #include <ctime>
 #include <string>
 #include <fstream>
-#include "../includes/Menu.h"
+#include "Menu.h"
 
 using namespace std;
 using namespace cv;
